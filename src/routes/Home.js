@@ -35,7 +35,7 @@ const Home = () => {
               Students' Register
             </Typography>
             <Box className="hero">
-              <img src="/images/hero/school.png" alt="school items" />
+              <img src="/images/hero/fstc.jpg" alt="FSTC logo" />
             </Box>
             <Stack
               spacing={2}

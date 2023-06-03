@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import { PassportContext } from "../Providers/PassportProvider";
 import Passport from "../components/Passport";
-// import axios from "axios";
+import axios from "axios";
 
 const StyledBox = styled(Box)`
   display: flex;
@@ -27,7 +27,11 @@ const StyledBox = styled(Box)`
 `;
 
 const Register = () => {
-  const [info, setInfo] = useState({ gender: "", studentClass: "", house: "" });
+  const [info, setInfo] = useState({
+    gender: "",
+    studentClass: "",
+    hostel: "",
+  });
   const [imgError, setImgError] = useState("");
   const formRef = useRef();
   const { imgSrc } = useContext(PassportContext);
@@ -43,8 +47,8 @@ const Register = () => {
       setInfo({ ...info, studentClass: event.target.value });
     }
 
-    if (event.target.name === "house") {
-      setInfo({ ...info, house: event.target.value });
+    if (event.target.name === "hostel") {
+      setInfo({ ...info, hostel: event.target.value });
     }
   };
 
@@ -56,28 +60,41 @@ const Register = () => {
       return;
     }
 
-    setImgError("")
+    setImgError("");
 
     const data = new FormData(formRef.current);
 
     const fname = data.get("fname");
     const sname = data.get("sname");
     const mname = data.get("mname");
-    const regNum = data.get("regNum");
+    const regno = data.get("regno");
     const dob = data.get("dob");
 
     const studentData = {
       fname,
       sname,
       mname,
-      regNum,
+      regno,
       dob,
       gender: info.gender,
-      class: info.studentClass,
-      imgSrc
+      studentClass: info.studentClass,
+      hostel: info.hostel,
+      imgSrc,
+      regdate: new Date(),
     };
 
-    console.log(studentData);
+    // console.log(studentData);
+
+    async function postData(url, data) {
+      try {
+        const resp = axios({ method: "post", url, data });
+        console.log(resp);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+
+    postData("/register", studentData);
   };
 
   return (
@@ -154,8 +171,8 @@ const Register = () => {
               width="100%"
             >
               <TextField
-                id="regNum"
-                name="regNum"
+                id="regno"
+                name="regno"
                 variant="filled"
                 required
                 label="Registration Number"
@@ -215,13 +232,13 @@ const Register = () => {
               </FormControl>
 
               <FormControl variant="filled" sx={{ minWidth: "30%" }}>
-                <InputLabel id="house-label">House</InputLabel>
+                <InputLabel id="hostel-label">Hostel</InputLabel>
                 <Select
-                  labelId="house-label"
-                  id="house"
-                  value={info.house}
+                  labelId="hostel-label"
+                  id="hostel"
+                  value={info.hostel}
                   onChange={handleChange}
-                  name="house"
+                  name="hostel"
                   required
                 >
                   <MenuItem value="">
