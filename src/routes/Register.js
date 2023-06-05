@@ -17,6 +17,7 @@ import {
 import { PassportContext } from "../Providers/PassportProvider";
 import Passport from "../components/Passport";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const StyledBox = styled(Box)`
   display: flex;
@@ -35,6 +36,7 @@ const Register = () => {
   const [imgError, setImgError] = useState("");
   const formRef = useRef();
   const { imgSrc } = useContext(PassportContext);
+  const navigate = useNavigate();
 
   const handleChange = event => {
     event.preventDefault();
@@ -83,12 +85,11 @@ const Register = () => {
       regdate: new Date(),
     };
 
-    // console.log(studentData);
-
     async function postData(url, data) {
       try {
-        const resp = axios({ method: "post", url, data });
+        const resp = await axios({ method: "post", url, data });
         console.log(resp);
+        navigate("/list", { replace: true });
       } catch (err) {
         console.log(err);
       }
