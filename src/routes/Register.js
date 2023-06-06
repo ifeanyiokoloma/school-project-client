@@ -89,7 +89,7 @@ const Register = () => {
       try {
         const resp = await axios({ method: "post", url, data });
         console.log(resp);
-        navigate("https://school-project-server.onrender.com/list", {
+        navigate("/list", {
           replace: true,
         });
       } catch (err) {
@@ -97,7 +97,10 @@ const Register = () => {
       }
     }
 
-    postData("/register", studentData);
+    postData(
+      "https://school-project-server.onrender.com/register",
+      studentData
+    );
   };
 
   return (
