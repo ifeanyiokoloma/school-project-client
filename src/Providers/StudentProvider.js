@@ -14,7 +14,7 @@ const StudentProvider = ({ children }) => {
       try {
         const { data } = await axios({
           method: "get",
-          url: `/list?name=${search}`,
+          url: `https://school-project-server.onrender.com/list?name=${search}`,
         });
         setStudents(data);
       } catch (err) {

@@ -16,7 +16,7 @@ const App = () => {
     try {
       const { data } = await axios({
         method: "get",
-        url: `/students/${params.regno}`,
+        url: `https://school-project-server.onrender.com/students/${params.regno}`,
       });
       return data;
     } catch (err) {
@@ -38,7 +38,6 @@ const App = () => {
     {
       path: "/list",
       element: <List />,
-      // loader: loaderRef.current,
     },
     {
       path: "/students/:regno",
