@@ -94,7 +94,7 @@ const Student = () => {
     try {
       const resp = await axios({
         method: "delete",
-        url: `/students/${regno}`,
+        url: `https://school-project-server.onrender.com/students/${regno}`,
       });
       console.log(resp);
       navigate("/list", { replace: true });
@@ -120,7 +120,7 @@ const Student = () => {
     try {
       await axios({
         method: "patch",
-        url: `/students/${regno}`,
+        url: `https://school-project-server.onrender.com/students/${regno}`,
         data,
       });
       window.location.reload();
