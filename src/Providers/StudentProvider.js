@@ -1,26 +1,33 @@
 import axios from "axios";
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
+import { SearchContext } from "./SearchProvider";
 
 export const StudentContext = createContext("");
 
 const StudentProvider = ({ children }) => {
   const [students, setStudents] = useState([]);
+  const [studentsErr, setStudentsErr] = useState([]);
+  const { search } = useContext(SearchContext);
 
   useEffect(() => {
-    async function getData(url) {
+    async function fetchData() {
       try {
-        const resp = await axios({ method: "get", url });
-        setStudents(resp.data.list);
+        const { data } = await axios({
+          method: "get",
+          url: `/list?name=${search}`,
+        });
+        setStudents(data);
       } catch (err) {
         console.log(err);
+        setStudentsErr("There was an error, try again");
       }
     }
-    
-    getData("/list");
-  }, []);
+
+    fetchData();
+  }, [search]);
 
   return (
-    <StudentContext.Provider value={{ students }}>
+    <StudentContext.Provider value={{ students, setStudents, studentsErr }}>
       {children}
     </StudentContext.Provider>
   );

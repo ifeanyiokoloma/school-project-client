@@ -3,12 +3,17 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import App from "./App";
-
+import SearchProvider from "./Providers/SearchProvider";
+import StudentProvider from "./Providers/StudentProvider";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <App />
+    <SearchProvider>
+      <StudentProvider>
+        <App />
+      </StudentProvider>
+    </SearchProvider>
   </React.StrictMode>
 );
 
