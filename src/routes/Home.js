@@ -32,7 +32,7 @@ const Home = () => {
                 textTransform: "uppercase",
               }}
             >
-              Students' Register
+              Day Students' Verification Software
             </Typography>
             <Box className="hero">
               <img src="/images/hero/fstc.jpg" alt="FSTC logo" />

@@ -5,6 +5,29 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #FFFDD0;
+}
+
+.btn-primary {
+  background-color: #000080;
+  border-color: #000080;
+}
+
+.btn-primary:hover {
+    color: #000080;
+    background-color: #FFFDD0;
+    border-color: #000080;
+}
+.btn-outline-primary {
+    color: #000080;
+    border-color: #000080;
+}
+
+
+.btn-outline-primary:hover {
+    color: #fff;
+    background-color: #000080;
+    border-color: #000080;
 }
 
 code {
