@@ -1,14 +1,8 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, Stack } from "@mui/material";
 import { styled } from "@mui/system";
 import { useContext, useState } from "react";
 import Webcam from "react-webcam";
 import { PassportContext } from "../Providers/PassportProvider";
-
-const videoConstraints = {
-  width: 600,
-  height: 600,
-  facingMode: { exact: "user" },
-};
 
 const StyledSnap = styled(Box)`
   display: flex;
@@ -43,62 +37,84 @@ const StyledSnap = styled(Box)`
 
 const Passport = () => {
   const [activateCamera, setActivateCamera] = useState(false);
-  const {imgSrc, setImgSrc, webcamRef, capture} = useContext(PassportContext);
+  const [backCamera, setBackCamera] = useState(false);
+  const { imgSrc, setImgSrc, webcamRef, capture } = useContext(PassportContext);
+
+  const videoConstraints = {
+    width: 600,
+    height: 600,
+    facingMode: { exact: !backCamera ? "user" : "environment" },
+  };
 
   return (
-      <StyledSnap>
-        <Box className="imgFrame">
-          {activateCamera && imgSrc === "" ? (
-            <Webcam
-              audio={false}
-              height={600}
-              ref={webcamRef}
-              screenshotFormat="image/jpeg"
-              width={600}
-              className="passport"
-              videoConstraints={videoConstraints}
-            />
-          ) : imgSrc !== "" ? (
-            <img src={imgSrc} alt="new" />
-          ) : (
-            !activateCamera && (
-              <Button
-                className="activate-camera"
-                onClick={() => setActivateCamera(true)}
-                variant="contained"
-              >
-                Take Passport
-              </Button>
-            )
-          )}
-        </Box>
-
-        {imgSrc !== "" && activateCamera ? (
-          <Button
-            variant="contained"
-            className="capture"
-            onClick={e => {
-              e.preventDefault();
-              setImgSrc("");
-            }}
-          >
-            Retake
-          </Button>
+    <StyledSnap>
+      <Box className="imgFrame">
+        {activateCamera && imgSrc === "" ? (
+          <Webcam
+            audio={false}
+            height={600}
+            ref={webcamRef}
+            screenshotFormat="image/jpeg"
+            width={600}
+            className="passport"
+            videoConstraints={videoConstraints}
+          />
+        ) : imgSrc !== "" ? (
+          <img src={imgSrc} alt="new" />
         ) : (
-          activateCamera && (
+          !activateCamera && (
             <Button
+              className="activate-camera"
+              onClick={() => setActivateCamera(true)}
               variant="contained"
-              className="capture"
-              onClick={e => {
-                e.preventDefault();
-                capture();
-              }}
             >
-              Capture
+              Take Passport
             </Button>
           )
         )}
-      </StyledSnap>
+      </Box>
+
+      {imgSrc !== "" && activateCamera ? (
+        <Button
+          variant="contained"
+          className="capture"
+          onClick={e => {
+            e.preventDefault();
+            setImgSrc("");
+          }}
+        >
+          Retake
+        </Button>
+      ) : (
+        activateCamera && (
+          <Stack spacing={2} component="ul" sx={{ listStyle: "none", pl: 0 }}>
+            <Box component="li">
+              <Button
+                variant="contained"
+                className="capture"
+                onClick={e => {
+                  e.preventDefault();
+                  capture();
+                }}
+              >
+                Capture
+              </Button>
+            </Box>
+            <Box component="li">
+              <Button
+                variant="contained"
+                className="capture"
+                onClick={e => {
+                  setBackCamera(!backCamera);
+                }}
+              >
+                {backCamera ? "Use Front Camera" : "Use Back camera"}
+              </Button>
+            </Box>
+          </Stack>
+        )
+      )}
+    </StyledSnap>
   );
 };
 
