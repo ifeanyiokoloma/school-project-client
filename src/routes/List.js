@@ -1,17 +1,10 @@
-import { Box, Container, Stack, Typography, styled } from "@mui/material";
+import { Box, Container, Stack, Typography } from "@mui/material";
 import DrawerAppBar from "../components/Navbar";
 import { Link } from "react-router-dom";
 import Search from "../components/Search";
 import { useContext } from "react";
 import { StudentContext } from "../Providers/StudentProvider";
-
-const StyledBox = styled(Stack)`
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 100px);
-  justify-content: center;
-  align-items: center;
-`;
+import StyledPage from "../styles/StyledPage";
 
 const List = () => {
   const { students } = useContext(StudentContext);
@@ -20,18 +13,13 @@ const List = () => {
     <>
       <DrawerAppBar />
       <Container maxWidth="sm">
-        <StyledBox spacing={4}>
-          <Typography
-            variant="h4"
-            component="h1"
-            sx={{
-              textAlign: "center",
-              fontWeight: 900,
-              textTransform: "uppercase",
-            }}
-          >
-            Students List
-          </Typography>
+        <StyledPage spacing={4} sx={{ alignItems: "center" }}>
+          <Box component="header" className="title">
+            <Typography variant="h4" component="h1">
+              Students List
+            </Typography>
+          </Box>
+
           <Search />
           <Stack spacing={2} component="ul" pl={0}>
             {Array.isArray(students) && students.length >= 1 ? (
@@ -48,7 +36,7 @@ const List = () => {
               <Typography component="p">No student in the list</Typography>
             )}
           </Stack>
-        </StyledBox>
+        </StyledPage>
       </Container>
     </>
   );

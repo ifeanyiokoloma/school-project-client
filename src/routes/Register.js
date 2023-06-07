@@ -12,20 +12,12 @@ import {
   Stack,
   TextField,
   Typography,
-  styled,
 } from "@mui/material";
 import { PassportContext } from "../Providers/PassportProvider";
 import Passport from "../components/Passport";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
-const StyledBox = styled(Box)`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 3rem;
-`;
+import StyledPage from "../styles/StyledPage";
 
 const Register = () => {
   const [info, setInfo] = useState({
@@ -104,25 +96,22 @@ const Register = () => {
   return (
     <>
       <DrawerAppBar />
-      <StyledBox>
-        <Container maxWidth="sm">
+      <Container maxWidth="sm">
+        <StyledPage>
           <Stack
             component="form"
             ref={formRef}
             onSubmit={handleSubmit}
             spacing={4}
           >
-            <Typography
-              variant="h4"
-              component="h1"
-              sx={{
-                textAlign: "center",
-                fontWeight: 900,
-                textTransform: "uppercase",
-              }}
-            >
-              Register New Student
-            </Typography>
+            <Box component="header" className="title">
+              <Typography
+                variant="h4"
+                component="h1"
+              >
+                Register New Student
+              </Typography>
+            </Box>
 
             <Stack spacing={1}>
               <Passport />
@@ -260,7 +249,6 @@ const Register = () => {
             <Stack
               spacing={2}
               gap={2}
-              // direction={{ sm: "row" }}
               justifyContent="space-between"
               width="100%"
             >
@@ -281,7 +269,6 @@ const Register = () => {
                   <MenuItem value="female">Female</MenuItem>
                 </Select>
               </FormControl>
-
             </Stack>
 
             <Box
@@ -296,8 +283,8 @@ const Register = () => {
               </Button>
             </Box>
           </Stack>
-        </Container>
-      </StyledBox>
+        </StyledPage>
+      </Container>
     </>
   );
 };

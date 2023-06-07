@@ -4,9 +4,8 @@ const StyledPage = styled(Stack)`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
   min-height: 100vh;
-  margin: 3rem 0;
+  margin: 2rem 0;
 
   .title {
     text-align: center;
