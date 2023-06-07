@@ -37,13 +37,13 @@ const About = () => {
                 The program will consist of two parts
               </Typography>
               <Stack component="ul" spacing={2}>
-                <Typography component="li">
+                <Typography component="li" variant="body2">
                   The first part will enable him to enroll new day students into
                   the students registers. The students input their name, class,
                   gender, and add a passport photograph so that they can be
                   recognised by their face.
                 </Typography>
-                <Typography component="li">
+                <Typography component="li" variant="body2">
                   The second part is the verification part. If a student is to
                   be verified, his name (or registration number is typed in the
                   program). If this student is verified, the program

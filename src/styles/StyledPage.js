@@ -14,6 +14,7 @@ const StyledPage = styled(Stack)`
 
   h1 {
     text-transform: uppercase;
+    font-weight: 900;
   }
 
   h2,
