@@ -70,14 +70,12 @@ const Register = () => {
     const sname = data.get("sname");
     const mname = data.get("mname");
     const regno = data.get("regno");
-    const dob = data.get("dob");
 
     const studentData = {
       fname,
       sname,
       mname,
       regno,
-      dob,
       gender: info.gender,
       studentClass: info.studentClass,
       hostel: info.hostel,
@@ -284,20 +282,6 @@ const Register = () => {
                 </Select>
               </FormControl>
 
-              <Stack
-                spacing={0.5}
-                // direction={{ sm: "row" }}
-                alignItems="center"
-              >
-                <Typography>Date of Birth:</Typography>
-                <TextField
-                  id="dob"
-                  name="dob"
-                  variant="filled"
-                  required
-                  type="date"
-                />
-              </Stack>
             </Stack>
 
             <Box

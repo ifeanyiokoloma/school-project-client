@@ -62,7 +62,6 @@ const Student = () => {
     sname,
     studentClass,
     hostel,
-    dob,
     regdate,
     imgSrc,
   } = student;
@@ -83,7 +82,6 @@ const Student = () => {
     gender: "",
     studentClass: "",
     hostel: "",
-    dob: dob,
   });
 
   useEffect(() => {
@@ -378,36 +376,6 @@ const Student = () => {
                 />
               </ListItem>
 
-              <ListItem>
-                {!edit && (
-                  <ListItemText primary={dob} secondary="Date of Birth" />
-                )}
-
-                {edit && (
-                  <Stack component="form" onSubmit={handleSubmit} spacing={1}>
-                    <Stack spacing={0.5} alignItems="center">
-                      <Typography>Date of Birth</Typography>
-                      <TextField
-                        id="dob"
-                        name="dob"
-                        variant="filled"
-                        required
-                        type="date"
-                        onChange={handleChange}
-                        value={info.dob}
-                      />
-                    </Stack>
-
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      startIcon={<Update />}
-                    >
-                      Update
-                    </Button>
-                  </Stack>
-                )}
-              </ListItem>
             </Stack>
           </List>
           <Button

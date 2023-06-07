@@ -16,8 +16,6 @@ const StyledBox = styled(Stack)`
 const List = () => {
   const { students } = useContext(StudentContext);
 
-  console.log(students);
-
   return (
     <>
       <DrawerAppBar />

@@ -9,8 +9,9 @@ const StudentProvider = ({ children }) => {
   const [studentsErr, setStudentsErr] = useState([]);
   const { search } = useContext(SearchContext);
 
+
   useEffect(() => {
-    async function fetchData() {
+    const fetchData = async () => {
       try {
         const { data } = await axios({
           method: "get",
@@ -21,13 +22,15 @@ const StudentProvider = ({ children }) => {
         console.log(err);
         setStudentsErr("There was an error, try again");
       }
-    }
+    };
 
     fetchData();
   }, [search]);
 
   return (
-    <StudentContext.Provider value={{ students, setStudents, studentsErr }}>
+    <StudentContext.Provider
+      value={{ students, setStudents, studentsErr }}
+    >
       {children}
     </StudentContext.Provider>
   );

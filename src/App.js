@@ -9,6 +9,7 @@ import Register from "./routes/Register";
 import List from "./routes/List";
 import Student from "./routes/Student";
 import axios from "axios";
+import About from "./routes/About";
 
 const App = () => {
 
@@ -43,6 +44,10 @@ const App = () => {
       path: "/students/:regno",
       element: <Student />,
       loader: paramsLoader,
+    },
+    {
+      path: "/about",
+      element: <About />,
     },
   ]);
 
