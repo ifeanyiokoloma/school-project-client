@@ -7,16 +7,21 @@ import SearchProvider from "./Providers/SearchProvider";
 import StudentProvider from "./Providers/StudentProvider";
 import { ThemeProvider } from "@mui/material";
 import theme from "./styles/Theme";
+import UtilitiesProvider from "./Providers/UtilitiesProvider";
+import Spinner from "./components/Spinner";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
-      <SearchProvider>
-        <StudentProvider>
-          <App />
-        </StudentProvider>
-      </SearchProvider>
+      <UtilitiesProvider>
+        <SearchProvider>
+          <StudentProvider>
+            <App />
+            <Spinner />
+          </StudentProvider>
+        </SearchProvider>
+      </UtilitiesProvider>
     </ThemeProvider>
   </React.StrictMode>
 );

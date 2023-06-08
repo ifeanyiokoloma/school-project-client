@@ -1,4 +1,3 @@
-// import react from "react";
 import {
   Box,
   Button,
@@ -17,9 +16,12 @@ import {
 } from "@mui/material";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
 import DrawerAppBar from "../components/Navbar";
-import { Delete, Edit, Update } from "@mui/icons-material";
+import { Circle, Delete, Edit, Update } from "@mui/icons-material";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useState } from "react";
+import { StudentContext } from "../Providers/StudentProvider";
+// import { UtilitiesContext } from "../Providers/UtilitiesProvider";
+// import Spinner from "../components/Spinner";
 
 const StyledProfile = styled(Box)`
   display: flex;
@@ -53,30 +55,27 @@ const StyledProfile = styled(Box)`
   }
 `;
 
+export const fetchStudent = async ({ params }) => {
+  try {
+    const { data } = await axios({
+      method: "get",
+      url: `https://school-project-server.onrender.com/students/${params.regno}`,
+    });
+    return data;
+  } catch (err) {
+    console.log(err);
+    return "There was an error, try again";
+  }
+};
+
 const Student = () => {
   const student = useLoaderData();
-  const {
-    _id,
-    fname,
-    mname,
-    sname,
-    studentClass,
-    hostel,
-    regdate,
-    imgSrc,
-  } = student;
-
-  function getSessionStorageOrDefault(key, defaultValue) {
-    const stored = sessionStorage.getItem(key);
-    if (!stored) {
-      return defaultValue;
-    }
-    return JSON.parse(stored);
-  }
-
-  const [edit, setEdit] = useState(getSessionStorageOrDefault("edit", false));
-
+  // const [updateErr, setUpdateErr] = useState("");
+  // const [deleteErr, setDeleteErr] = useState("");
+  const { fetchStudents } = useContext(StudentContext);
+  // const { startSpinner, stopSpinner, spinner } = useContext(UtilitiesContext);
   const { regno } = useParams();
+  const [edit, setEdit] = useState(false);
   const navigate = useNavigate();
   const [info, setInfo] = useState({
     gender: "",
@@ -84,21 +83,43 @@ const Student = () => {
     hostel: "",
   });
 
-  useEffect(() => {
-    sessionStorage.setItem("edit", JSON.stringify(edit));
-  }, [edit]);
+  const [records, setRecords] = useState(student.records || false);
+  const [present, setPresent] = useState(student.present || []);
 
-  const handleDeleteStudent = async e => {
+  const updateStudent = async data => {
     try {
       const resp = await axios({
-        method: "delete",
+        method: "patch",
         url: `https://school-project-server.onrender.com/students/${regno}`,
+        data,
       });
       console.log(resp);
-      navigate("/list", { replace: true });
+      return resp;
     } catch (err) {
       console.log(err);
     }
+  };
+
+  const deleteStudent = async data => {
+    try {
+      await axios({
+        method: "delete",
+        url: `https://school-project-server.onrender.com/students/${regno}`,
+        data,
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const { _id, fname, mname, sname, studentClass, hostel, regdate, imgSrc } =
+    student;
+
+  const handleDeleteStudent = async e => {
+    await deleteStudent();
+
+    navigate("/list", { replace: true });
+    await fetchStudents();
   };
 
   const handleSubmit = async e => {
@@ -115,16 +136,7 @@ const Student = () => {
       [name]: value,
     };
 
-    try {
-      await axios({
-        method: "patch",
-        url: `https://school-project-server.onrender.com/students/${regno}`,
-        data,
-      });
-      window.location.reload();
-    } catch (err) {
-      console.log(err);
-    }
+    await updateStudent(data);
   };
 
   const handleChange = e => {
@@ -134,17 +146,46 @@ const Student = () => {
       setInfo({ ...info, gender: e.target.value });
     }
 
-    if (e.target.name === "class") {
+    if (e.target.name === "studentClass") {
       setInfo({ ...info, studentClass: e.target.value });
     }
 
     if (e.target.name === "hostel") {
       setInfo({ ...info, hostel: e.target.value });
     }
+  };
 
-    if (e.target.name === "dob") {
-      setInfo({ ...info, dob: e.target.value });
-    }
+  const updateRecords = () => {
+    if (present)
+      setRecords([
+        ...records,
+        {
+          status: `marked as "in school"`,
+          time: new Date(),
+        },
+      ]);
+    else
+      setRecords([
+        ...records,
+        {
+          status: `marked as "left school"`,
+          time: new Date(),
+        },
+      ]);
+  };
+
+  const markRegister = async e => {
+    e.preventDefault();
+
+    setPresent(!present);
+
+    updateRecords();
+  };
+
+  const logout = async () => {
+    await updateStudent({ present });
+    await updateStudent({ records });
+    navigate("/list");
   };
 
   return (
@@ -163,6 +204,47 @@ const Student = () => {
           <Typography variant="h4" textAlign="center" component="h1">
             {fname} {sname}
           </Typography>
+
+          <Stack spacing={2}>
+            <Button
+              onClick={markRegister}
+              variant="contained"
+              color={present === true ? "gray" : "success"}
+              sx={{ color: "white" }}
+            >
+              {present === true ? "Mark As Absent" : "Mark As Present"}
+            </Button>
+            <Button onClick={logout} variant="contained" color="success">
+              Submit And Logout
+            </Button>
+            <Stack direction="row" justifyContent="center" spacing={2}>
+              <Typography variant="body1">
+                {present === true
+                  ? "You marked as present"
+                  : "You are currently not in School"}
+              </Typography>
+              <Circle color={present === true ? "success" : "gray"} />
+            </Stack>
+          </Stack>
+
+          {/* {student && student.records.length > 0 &&
+            student.records.map(record => (
+              <List
+                key={record.time}
+                sx={{
+                  width: "100%",
+                  maxWidth: 360,
+                  bgcolor: "background.paper",
+                }}
+              >
+                <ListItem>
+                  <ListItemText
+                    primary={record.status}
+                    secondary={record.time}
+                  />
+                </ListItem>
+              </List>
+            ))} */}
 
           <List>
             <Stack direction={{ sm: "row" }}>
@@ -265,7 +347,7 @@ const Student = () => {
                         id="class"
                         value={info.studentClass}
                         onChange={handleChange}
-                        name="class"
+                        name="studentClass"
                         required
                       >
                         <MenuItem value="">
@@ -375,7 +457,6 @@ const Student = () => {
                   secondary="Registration Date"
                 />
               </ListItem>
-
             </Stack>
           </List>
           <Button
@@ -393,7 +474,7 @@ const Student = () => {
           >
             Delete Student
           </Button>
-        </Stack>
+        </Stack>{" "}
       </StyledProfile>
     </Container>
   );

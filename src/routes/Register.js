@@ -18,6 +18,7 @@ import Passport from "../components/Passport";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import StyledPage from "../styles/StyledPage";
+import { StudentContext } from "../Providers/StudentProvider";
 
 const Register = () => {
   const [info, setInfo] = useState({
@@ -29,6 +30,7 @@ const Register = () => {
   const formRef = useRef();
   const { imgSrc } = useContext(PassportContext);
   const navigate = useNavigate();
+  const { fetchStudents } = useContext(StudentContext);
 
   const handleChange = event => {
     event.preventDefault();
@@ -77,8 +79,8 @@ const Register = () => {
 
     async function postData(url, data) {
       try {
-        const resp = await axios({ method: "post", url, data });
-        console.log(resp);
+        await axios({ method: "post", url, data });
+        fetchStudents();
         navigate("/list", {
           replace: true,
         });
@@ -102,7 +104,7 @@ const Register = () => {
           ref={formRef}
           onSubmit={handleSubmit}
           spacing={4}
-          sx={{ alignItems: "center" }}
+          sx={{ alignItems: { sm: "center" } }}
         >
           <Box component="header" className="title">
             <Typography variant="h4" component="h1">

@@ -1,9 +1,11 @@
 import { Stack, TextField } from "@mui/material";
 import React, { useContext } from "react";
 import { SearchContext } from "../Providers/SearchProvider";
+import { StudentContext } from "../Providers/StudentProvider";
 
 const Search = () => {
   const { setSearch } = useContext(SearchContext);
+  const { fetchStudents } = useContext(StudentContext);
 
   const handleChange = e => {
     e.preventDefault();
@@ -11,6 +13,8 @@ const Search = () => {
     const searchValue = e.target.value;
 
     setSearch(searchValue);
+
+    fetchStudents();
   };
 
   return (
@@ -21,7 +25,7 @@ const Search = () => {
         variant="filled"
         type="search"
         onChange={handleChange}
-        spellcheck="false"
+        spellCheck="false"
       />
     </Stack>
   );
