@@ -1,9 +1,8 @@
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import DrawerAppBar from "../components/Navbar";
 import {
   Alert,
   Box,
-  Button,
   Container,
   FormControl,
   InputLabel,
@@ -19,6 +18,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import StyledPage from "../styles/StyledPage";
 import { StudentContext } from "../Providers/StudentProvider";
+import { enqueueSnackbar } from "notistack";
+import LoadingButton from "@mui/lab/LoadingButton";
+import { Send } from "@mui/icons-material";
+import { UtilitiesContext } from "../Providers/UtilitiesProvider";
+import { FaceIOContext } from "../components/Faceio";
 
 const Register = () => {
   const [info, setInfo] = useState({
@@ -31,6 +35,8 @@ const Register = () => {
   const { imgSrc } = useContext(PassportContext);
   const navigate = useNavigate();
   const { fetchStudents } = useContext(StudentContext);
+  const { loading, setLoading } = useContext(UtilitiesContext);
+  const { handleEnroll } = useContext(FaceIOContext);
 
   const handleChange = event => {
     event.preventDefault();
@@ -50,6 +56,7 @@ const Register = () => {
 
   const handleSubmit = event => {
     event.preventDefault();
+    setLoading(true);
 
     if (imgSrc === "") {
       setImgError("Take Student Passport!");
@@ -80,12 +87,25 @@ const Register = () => {
     async function postData(url, data) {
       try {
         await axios({ method: "post", url, data });
-        fetchStudents();
+        await fetchStudents();
+        await handleEnroll(data);
+        enqueueSnackbar("Successfully registered a student", {
+          variant: "success",
+        });
         navigate("/list", {
           replace: true,
         });
       } catch (err) {
         console.log(err);
+        if (err.message === "Network Error") {
+          return enqueueSnackbar(
+            `Check your network, error message: ${err.message}`,
+            {
+              variant: "error",
+            }
+          );
+        }
+        enqueueSnackbar("An error Occurred", { variant: "error" });
       }
     }
 
@@ -93,7 +113,13 @@ const Register = () => {
       "https://school-project-server.onrender.com/register",
       studentData
     );
+
+    setLoading(false);
   };
+
+  useEffect(() => {
+    console.log(loading);
+  }, [loading]);
 
   return (
     <>
@@ -269,13 +295,16 @@ const Register = () => {
           <Box
             sx={{ width: "100%", display: "flex", justifyContent: "center" }}
           >
-            <Button
+            <LoadingButton
               sx={{ width: { xs: "100%", sm: "50%" } }}
               variant="contained"
               type="submit"
+              endIcon={<Send />}
+              loading={loading}
+              loadingPosition="end"
             >
               Submit
-            </Button>
+            </LoadingButton>
           </Box>
         </StyledPage>
       </Container>

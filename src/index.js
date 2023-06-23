@@ -9,19 +9,24 @@ import { ThemeProvider } from "@mui/material";
 import theme from "./styles/Theme";
 import UtilitiesProvider from "./Providers/UtilitiesProvider";
 import Spinner from "./components/Spinner";
+import { SnackbarProvider } from "notistack";
+import FaceioProvider from "./components/Faceio";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
-      <UtilitiesProvider>
-        <SearchProvider>
-          <StudentProvider>
-            <App />
-            <Spinner />
-          </StudentProvider>
-        </SearchProvider>
-      </UtilitiesProvider>
+      <FaceioProvider>
+        <UtilitiesProvider>
+          <SearchProvider>
+            <StudentProvider>
+              <SnackbarProvider />
+              <App />
+              <Spinner />
+            </StudentProvider>
+          </SearchProvider>
+        </UtilitiesProvider>
+      </FaceioProvider>
     </ThemeProvider>
   </React.StrictMode>
 );

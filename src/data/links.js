@@ -1,5 +1,5 @@
 export const mainLinks = [
-  { name: "register new students", link: "/register", id: 1 },
-  { name: "students list", link: "/list", id: 2 },
-  { name: "about", link: "/about", id: 3 },
+  { name: "Enroll New Students", link: "/register", id: 1 },
+  { name: "Students List", link: "/list", id: 2 },
+  { name: "About", link: "/about", id: 3 },
 ];
