@@ -47,7 +47,13 @@ function DrawerAppBar() {
             display={{ xs: "none", sm: "flex" }}
             direction="row"
             component="ul"
-            sx={{ listStyle: "none", p: 0, m: 0, textTransform: "uppercase" }}
+            sx={{
+              listStyle: "none",
+              p: 0,
+              m: 0,
+              textTransform: "uppercase",
+              color: "secondary",
+            }}
           >
             {mainLinks.map(item => (
               <li key={item.id}>

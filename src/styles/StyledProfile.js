@@ -6,6 +6,7 @@ export const StyledProfile = styled(Box)`
   gap: 1rem;
   width: 100%;
   align-items: center;
+  margin-bottom: 3rem;
 
   .imgFrame {
     width: 100%;

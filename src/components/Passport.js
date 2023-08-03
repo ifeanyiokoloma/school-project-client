@@ -90,6 +90,7 @@ const Passport = () => {
           <Stack spacing={2} component="ul" sx={{ listStyle: "none", pl: 0 }}>
             <Box component="li">
               <Button
+                fullWidth
                 variant="contained"
                 className="capture"
                 onClick={e => {
@@ -102,6 +103,7 @@ const Passport = () => {
             </Box>
             <Box component="li">
               <Button
+                fullWidth
                 variant="contained"
                 className="capture"
                 onClick={e => {

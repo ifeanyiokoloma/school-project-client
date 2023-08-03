@@ -5,7 +5,6 @@ import PassportProvider from "./Providers/PassportProvider";
 import { router } from "./services/router";
 
 const App = () => {
- 
   return (
     <NavbarProvider>
       <PassportProvider>

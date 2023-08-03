@@ -1,8 +1,9 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import DrawerAppBar from "../components/Navbar";
 import {
   Alert,
   Box,
+  Button,
   Container,
   FormControl,
   InputLabel,
@@ -14,15 +15,17 @@ import {
 } from "@mui/material";
 import { PassportContext } from "../Providers/PassportProvider";
 import Passport from "../components/Passport";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import StyledPage from "../styles/StyledPage";
-import { StudentContext } from "../Providers/StudentProvider";
 import { enqueueSnackbar } from "notistack";
-import LoadingButton from "@mui/lab/LoadingButton";
+// import LoadingButton from "@mui/lab/LoadingButton";
 import { Send } from "@mui/icons-material";
-import { UtilitiesContext } from "../Providers/UtilitiesProvider";
-import { FaceIOContext } from "../components/Faceio";
+import {
+  createStudent,
+  getFormVals,
+  getInputVals,
+} from "../services/functions";
+import { FaceIOContext, enroll } from "../components/Faceio";
 
 const Register = () => {
   const [info, setInfo] = useState({
@@ -31,95 +34,67 @@ const Register = () => {
     hostel: "",
   });
   const [imgError, setImgError] = useState("");
+  const [studentData, setStudentData] = useState("");
   const formRef = useRef();
   const { imgSrc } = useContext(PassportContext);
+  const { handleError } = useContext(FaceIOContext);
   const navigate = useNavigate();
-  const { fetchStudents } = useContext(StudentContext);
-  const { loading, setLoading } = useContext(UtilitiesContext);
-  const { handleEnroll } = useContext(FaceIOContext);
 
-  const handleChange = event => {
-    event.preventDefault();
-
-    if (event.target.name === "gender") {
-      setInfo({ ...info, gender: event.target.value });
-    }
-
-    if (event.target.name === "class") {
-      setInfo({ ...info, studentClass: event.target.value });
-    }
-
-    if (event.target.name === "hostel") {
-      setInfo({ ...info, hostel: event.target.value });
-    }
+  const handleChange = e => {
+    setInfo({ ...info, ...getInputVals(e) });
   };
 
-  const handleSubmit = event => {
-    event.preventDefault();
-    setLoading(true);
+  function addFaceData(id, timestamp) {
+    setStudentData(() => {
+      studentData.faceID = id;
+      studentData.faceTimestamp = timestamp;
+    });
+  }
+
+  async function sendStudentData(data) {
+    const resp = await createStudent("/register", data);
+    console.log(resp)
+  }
+
+  async function handleFaceRecognition() {
+    try {
+      const faceData = await enroll({
+        locale: "auto",
+        payload: studentData,
+        userConsent: true,
+      });
+
+      addFaceData(faceData.facialId, faceData.timestamp);
+      await sendStudentData(studentData);
+      enqueueSnackbar("Successfully registered a student", {
+        variant: "success",
+      });
+      navigate("/list", {
+        replace: true,
+      });
+    } catch (error) {
+      handleError(error);
+    }
+  }
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    // setLoading(true);
 
     if (imgSrc === "") {
-      setImgError("Take Student Passport!");
+      setImgError("Take student passport!");
       return;
     }
 
     setImgError("");
 
-    const data = new FormData(formRef.current);
+    const data = getFormVals(e);
 
-    const fname = data.get("fname");
-    const sname = data.get("sname");
-    const mname = data.get("mname");
-    const regno = data.get("regno");
+    data.imgSrc = imgSrc;
 
-    const studentData = {
-      fname,
-      sname,
-      mname,
-      regno,
-      gender: info.gender,
-      studentClass: info.studentClass,
-      hostel: info.hostel,
-      imgSrc,
-      regdate: new Date(),
-    };
-
-    async function postData(url, data) {
-      try {
-        await axios({ method: "post", url, data });
-        await fetchStudents();
-        await handleEnroll(data);
-        enqueueSnackbar("Successfully registered a student", {
-          variant: "success",
-        });
-        navigate("/list", {
-          replace: true,
-        });
-      } catch (err) {
-        console.log(err);
-        if (err.message === "Network Error") {
-          return enqueueSnackbar(
-            `Check your network, error message: ${err.message}`,
-            {
-              variant: "error",
-            }
-          );
-        }
-        enqueueSnackbar("An error Occurred", { variant: "error" });
-      }
-    }
-
-    postData(
-      "https://school-project-server.onrender.com/register",
-      studentData
-    );
-
-    setLoading(false);
+    setStudentData(data);
+    console.log(data);
   };
-
-  useEffect(() => {
-    console.log(loading);
-  }, [loading]);
 
   return (
     <>
@@ -130,7 +105,10 @@ const Register = () => {
           ref={formRef}
           onSubmit={handleSubmit}
           spacing={4}
-          sx={{ alignItems: { sm: "center" } }}
+          sx={{
+            alignItems: { sm: "center" },
+            display: studentData ? "none" : "flex",
+          }}
         >
           <Box component="header" className="title">
             <Typography variant="h4" component="h1">
@@ -190,7 +168,7 @@ const Register = () => {
               variant="filled"
               required
               label="Registration Number"
-              type="number"
+              type="text"
             />
 
             <FormControl variant="filled" sx={{ minWidth: "30%" }}>
@@ -200,7 +178,7 @@ const Register = () => {
                 id="class"
                 value={info.studentClass}
                 onChange={handleChange}
-                name="class"
+                name="studentClass"
                 required
               >
                 <MenuItem value="">
@@ -295,7 +273,10 @@ const Register = () => {
           <Box
             sx={{ width: "100%", display: "flex", justifyContent: "center" }}
           >
-            <LoadingButton
+            <Button variant="contained" type="submit" endIcon={<Send />}>
+              Submit
+            </Button>
+            {/* <LoadingButton
               sx={{ width: { xs: "100%", sm: "50%" } }}
               variant="contained"
               type="submit"
@@ -304,9 +285,23 @@ const Register = () => {
               loadingPosition="end"
             >
               Submit
-            </LoadingButton>
+            </LoadingButton> */}
           </Box>
         </StyledPage>
+
+        <Button
+          onClick={handleFaceRecognition}
+          variant="contained"
+          color="primary"
+          sx={{
+            color: "white",
+            display: studentData ? "block" : "none",
+            marginTop: 5,
+            textAlign: "center",
+          }}
+        >
+          Enroll For Face Recognition
+        </Button>
       </Container>
     </>
   );

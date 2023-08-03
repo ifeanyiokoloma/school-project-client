@@ -1,5 +1,4 @@
 import {
-  Alert,
   Button,
   Container,
   FormControl,
@@ -15,8 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import { useLoaderData, useNavigate, useParams } from "react-router-dom";
-import DrawerAppBar from "../components/Navbar";
-import { Circle, Delete, Edit, Update } from "@mui/icons-material";
+import { Delete, Edit, Update } from "@mui/icons-material";
 import { useContext, useState } from "react";
 import { StudentContext } from "../Providers/StudentProvider";
 import { StyledProfile } from "../styles/StyledProfile";
@@ -28,7 +26,7 @@ const Student = () => {
   const student = useLoaderData();
   const { fetchStudents } = useContext(StudentContext);
   // const { startSpinner, stopSpinner, spinner } = useContext(UtilitiesContext);
-  const { regno } = useParams();
+  const { faceID } = useParams();
   const [edit, setEdit] = useState(false);
   const navigate = useNavigate();
   const [info, setInfo] = useState({
@@ -36,14 +34,11 @@ const Student = () => {
     studentClass: "",
     hostel: "",
   });
-  const [records, setRecords] = useState(student.records || []);
-  const [present, setPresent] = useState(student.present || false);
   const { _id, fname, mname, sname, studentClass, hostel, regdate, imgSrc } =
     student;
-  const [activateLogout, setActivateLogout] = useState(false);
 
   const handleDeleteStudent = async e => {
-    await deleteStudent(regno);
+    await deleteStudent(faceID);
 
     navigate("/list", { replace: true });
     await fetchStudents();
@@ -63,7 +58,7 @@ const Student = () => {
       [name]: value,
     };
 
-    await updateStudent(data, regno);
+    await updateStudent(data, faceID);
   };
 
   const handleChange = e => {
@@ -82,112 +77,34 @@ const Student = () => {
     }
   };
 
-  const updateRecords = () => {
-    if (present)
-      setRecords([
-        ...records,
-        {
-          status: `marked as "in school"`,
-          time: new Date(),
-        },
-      ]);
-    else
-      setRecords([
-        ...records,
-        {
-          status: `marked as "left school"`,
-          time: new Date(),
-        },
-      ]);
-  };
-
-  const markRegister = async e => {
-    e.preventDefault();
-
-    setPresent(!present);
-    updateRecords();
-    setActivateLogout(true);
-  };
-
-  const logout = async () => {
-    await updateStudent({ present }, regno);
-    await updateStudent({ records }, regno);
-    navigate("/list");
-  };
-
   return (
     <Container maxWidth="lg">
       <StyledProfile>
-        <DrawerAppBar />
+        
 
         <Grid spacing={3} container>
           <Grid sm={4} md={3} item>
-            <Stack spacing={4}>
-              <Stack
-                justifyContent="center"
-                alignItems="center"
-                className="imgFrame"
-              >
-                <img
-                  key={_id}
-                  src={imgSrc}
-                  alt={`${fname} ${sname}`}
-                  className="passport"
-                />
-              </Stack>
-              <Stack spacing={4}>
-                <Button
-                  onClick={markRegister}
-                  variant="contained"
-                  color={present === true ? "gray" : "success"}
-                  sx={{ color: "white" }}
-                >
-                  {present === true ? "Mark As Absent" : "Mark As Present"}
-                </Button>
-                <Stack spacing={2}>
-                  <Alert severity="info">
-                    Mark register before you can <em>submit and logout</em>
-                  </Alert>
-                  <Button
-                    disabled={!activateLogout}
-                    onClick={logout}
-                    variant="contained"
-                  >
-                    Submit And Logout
-                  </Button>
-                </Stack>
-
-                <Button
-                  onClick={() => setEdit(!edit)}
-                  variant="contained"
-                  startIcon={edit ? null : <Edit />}
-                >
-                  {edit ? "Done editing" : "Edit Info"}
-                </Button>
-                <Button
-                  onClick={handleDeleteStudent}
-                  color="error"
-                  variant="contained"
-                  startIcon={<Delete />}
-                >
-                  Delete Student
-                </Button>
-              </Stack>
+            {/* Image Stack */}
+            <Stack
+              justifyContent="center"
+              alignItems="center"
+              className="imgFrame"
+            >
+              <img
+                key={_id}
+                src={imgSrc}
+                alt={`${fname} ${sname}`}
+                className="passport"
+              />
             </Stack>
           </Grid>
           <Grid sm={8} md={6} item>
+            {/* Student Information */}
             <Stack spacing={2}>
+              {/* Student Name */}
               <Typography variant="h4" textAlign="center" component="h1">
                 {fname} {sname}
               </Typography>
-              <Stack direction="row" justifyContent="center" spacing={2}>
-                <Typography variant="body1">
-                  {present === true
-                    ? "You marked as present"
-                    : "You are currently not in School"}
-                </Typography>
-                <Circle color={present === true ? "success" : "gray"} />
-              </Stack>
               <Stack mb={5} spacing={4}>
                 <List>
                   <Stack direction={{ sm: "row" }}>
@@ -224,6 +141,7 @@ const Student = () => {
                         )}
                       </Stack>
                     </ListItem>
+
                     <ListItem>
                       {!edit && (
                         <ListItemText primary={mname} secondary="Middle Name" />
@@ -281,6 +199,7 @@ const Student = () => {
                       )}
                     </ListItem>
                   </Stack>
+
                   <Stack direction={{ sm: "row" }}>
                     <ListItem>
                       <ListItemText
@@ -433,26 +352,26 @@ const Student = () => {
             </Stack>
           </Grid>
 
-          <Grid md={3} item>
-            {student &&
-              student.records.length > 0 &&
-              student.records.map(record => (
-                <List
-                  key={record.time}
-                  sx={{
-                    width: "100%",
-                    maxWidth: 360,
-                    bgcolor: "background.paper",
-                  }}
-                >
-                  <ListItem>
-                    <ListItemText
-                      primary={record.status}
-                      secondary={record.time}
-                    />
-                  </ListItem>
-                </List>
-              ))}
+          <Grid item>
+            <Stack spacing={2} direction={{ xs: "column", sm: "row" }}>
+              <Button
+                fullWidth
+                onClick={() => setEdit(!edit)}
+                variant="contained"
+                startIcon={edit ? null : <Edit />}
+              >
+                {edit ? "Done editing" : "Edit Info"}
+              </Button>
+              <Button
+                fullWidth
+                onClick={handleDeleteStudent}
+                color="error"
+                variant="contained"
+                startIcon={<Delete />}
+              >
+                Delete
+              </Button>
+            </Stack>
           </Grid>
         </Grid>
       </StyledProfile>

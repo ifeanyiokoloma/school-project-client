@@ -37,7 +37,7 @@ const List = () => {
               students.map(student => (
                 <Box key={student._id}>
                   <Typography component="li" variant="body1">
-                    <StyledLink to={`/students/${student.regno}`}>
+                    <StyledLink to={`/students/${student.faceID}`}>
                       <b>{`${student.fname} ${student.mname} ${student.sname}`}</b>
                     </StyledLink>
                   </Typography>
